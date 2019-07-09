@@ -17,7 +17,38 @@ class CursoController extends Controller
     }
 
     public function adicionar(){
-    	
+    	return view('admin.cursos.adicionar');
+    }
+
+    public function salvar(Request $req)
+    {
+    	$dados = $req->all();
+
+    	//teste do chekbox
+    	if(isset($dados['publicado'])){
+    		$dados['publicado'] = 'sim';
+    	}else{
+    		$dados['publicado'] = 'nao';
+
+    	}
+
+
+
+    	//tratar imagem
+    	if($req->hasfile('imagem')){
+    		$imagem = $req->file('imagem');
+    		$num = rand(1111,9999);
+    		$dir = "img/cursos";
+    		$ex = $imagem->guessClientExtension();
+    		$nomeImagem = "imagem_".$num.".".$ex;
+    		$imagem->move($dir,$nomeImagem);
+    		$dados['imagem'] = $dir."/".$nomeImagem; 
+    	}
+
+    	Curso::create($dados); //dessa forma ja salva no bando de dados mas defina o fillable no curso.php
+
+    	return redirect()->route('admin.cursos');
+
     }
 
 
